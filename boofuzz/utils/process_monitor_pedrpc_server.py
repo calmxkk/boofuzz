@@ -143,8 +143,6 @@ class ProcessMonitorPedrpcServer(pedrpc.Server):
         Returns:
             bool: True if the target is still active, False otherwise.
         """
-        time.sleep(0.1)
-        self.log(f"sleep 10ms for crash", 10)
         if self.debugger_thread is not None:
             self.log(f"call by postsend", 10)
             return self.debugger_thread.post_send()
