@@ -1,8 +1,8 @@
 import sys
-
+import os
 import click
+import errno
 
-from boofuzz import helpers
 from boofuzz.constants import DEFAULT_PROCMON_PORT
 from boofuzz.utils.debugger_thread_simple import DebuggerThreadSimple
 from boofuzz.utils.process_monitor_pedrpc_server import ProcessMonitorPedrpcServer
@@ -37,6 +37,17 @@ Limitations
       specified by crash_bin will any other available details such as the test
       that caused the crash and the signal received by the program
 """
+
+def mkdir_safe(directory_name, file_included=False):
+    """Creates directory_name and subdirectories. If file_included is true, removes final element of the path"""
+    if file_included:
+        fullpath = os.path.abspath(directory_name)
+        directory_name = os.path.dirname(fullpath)
+    try:
+        os.makedirs(directory_name)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
 
 
 def err(msg):
@@ -94,7 +105,7 @@ def serve_procmon(port, crash_bin, proc_name, ignore_pid, log_level, coredump_di
 )
 def go(crash_bin, ignore_pid, log_level, proc_name, port, coredump_dir):
     if coredump_dir is not None:
-        helpers.mkdir_safe(coredump_dir)
+        mkdir_safe(coredump_dir)
 
     serve_procmon(
         port=port,

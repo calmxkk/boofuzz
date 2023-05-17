@@ -12,7 +12,6 @@ from functools import reduce
 
 from colorama import Back, Fore, Style
 
-from boofuzz.connections import ip_constants, udp_socket_connection
 from boofuzz.exception import BoofuzzError
 
 # Curses color pairs

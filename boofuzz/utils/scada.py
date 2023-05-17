@@ -1,7 +1,30 @@
 import math
 import struct
 
-from ..helpers import crc16
+def crc16(string, value=0):
+    """CRC-16 poly: p(x) = x**16 + x**15 + x**2 + 1
+
+    @param string: Data over which to calculate crc.
+    @param value: Initial CRC value.
+    """
+    crc16_table = []
+    for byte in range(256):
+        crc = 0
+
+        for _ in range(8):
+            if (byte ^ crc) & 1:
+                crc = (crc >> 1) ^ 0xA001  # polly
+            else:
+                crc >>= 1
+
+            byte >>= 1
+
+        crc16_table.append(crc)
+
+    for ch in string:
+        value = crc16_table[ord(ch) ^ (value & 0xFF)] ^ (value >> 8)
+
+    return value
 
 
 def dnp3(data, control_code=b"\x44", src=b"\x00\x00", dst=b"\x00\x00"):
